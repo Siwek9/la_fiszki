@@ -9,3 +9,4 @@
 # unspecified release date
 - add option to group flashcards, (x)
 - can see most recent used flashcards, (x)
+- add option to turn back through flashcards to change answer in "choosing" mode (x)
