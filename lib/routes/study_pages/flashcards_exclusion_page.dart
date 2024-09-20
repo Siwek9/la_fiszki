@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
@@ -8,6 +7,11 @@ import 'package:la_fiszki/widgets/choose_button.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
+
+import 'package:la_fiszki/widgets/flashcard_panel.dart';
+import 'package:la_fiszki/widgets/flashcard_side_text.dart';
+import 'package:la_fiszki/widgets/flashcard_text_content.dart';
+import 'package:la_fiszki/widgets/prevent_from_losing_progress_dialog.dart';
 
 class FlashcardsExclusionPage extends StatefulWidget {
   final int firstSide;
@@ -28,7 +32,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
   bool sideNow = true;
   // int? randomTranslate;
   List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
-  List<FlashcardElement> cardDoesntKnown = List<FlashcardElement>.empty(growable: true);
+  List<FlashcardElement> cardDoesNotKnown = List<FlashcardElement>.empty(growable: true);
 
   List<String> sideContent(String side) {
     if (side == "front") {
@@ -48,7 +52,6 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
 
   @override
   Widget build(BuildContext context) {
-    // randomTranslate = randomTranslate ?? Random().nextInt(sideContent("front").length);
     return WillPopScope(
       onWillPop: () => preventFromLosingProgress(context),
       child: Scaffold(
@@ -59,53 +62,19 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
         body: LayoutBuilder(builder: (context, BoxConstraints constraints) {
           return Column(children: [
             GestureDetector(
-              onTap: () {
-                setState(() {
-                  sideNow = !sideNow;
-                });
-              },
-              child: SizedBox(
-                width: constraints.maxWidth,
-                height: constraints.maxHeight / 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Stack(
-                    children: [
-                      Card(
-                        color: Theme.of(context).colorScheme.primary,
-                        child: Padding(
-                          padding: const EdgeInsets.all(32.0),
-                          child: Center(
-                            child: AutoSizeText(
-                              sideNow
-                                  ? sideContent("front")[Random().nextInt(sideContent("front").length)]
-                                  : sideContent("back").join('/\n'),
-                              style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                  color: Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: Theme.of(context).textTheme.displayMedium!.fontSize!),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned.fill(
-                        top: 25,
-                        child: Text(
-                          (sideNow ^ (widget.firstSide == 1))
-                              ? widget.flashcardData.frontSideName
-                              : widget.flashcardData.backSideName,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                onTap: () {
+                  setState(() {
+                    sideNow = !sideNow;
+                  });
+                },
+                child: FlashcardPanel(
+                    height: constraints.maxHeight / 2,
+                    topChild: FlashcardSideText((sideNow ^ (widget.firstSide == 1))
+                        ? widget.flashcardData.frontSideName
+                        : widget.flashcardData.backSideName),
+                    centerChild: FlashcardTextContent(sideNow
+                        ? sideContent("front")[Random().nextInt(sideContent("front").length)]
+                        : sideContent("back").join('/\n')))),
             Flex(
               direction: Axis.horizontal,
               children: [
@@ -122,7 +91,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                   color: WidgetStatePropertyAll(Colors.red),
                   constraints: constraints,
                   onPressed: () {
-                    whenUserDontKnow(widget.cards[cardNow]);
+                    whenUserDoNotKnow(widget.cards[cardNow]);
                   },
                 ),
               ],
@@ -137,21 +106,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
     final shouldPop = await showDialog<bool>(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          title: Text('Wyjście'),
-          content: Text('Twoje postępy w tej sesji fiszek nie zostaną zapisane. Czy na pewno chcesz wyjść?'),
-          actions: [
-            TextButton(
-              child: Text('Anuluj'),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            TextButton(
-              child: Text('Potwierdź'),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-          ],
-        );
+        return PreventFromLosingProgressDialog();
       },
     );
     return shouldPop ?? false;
@@ -167,7 +122,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
             builder: (context) => FlashcardSummary(
               folderName: widget.folderName,
               knownFlashcards: cardKnown,
-              dontKnownFlashcards: cardDoesntKnown,
+              doNotKnownFlashcards: cardDoesNotKnown,
               flashcardData: widget.flashcardData,
               firstSide: widget.firstSide,
               mode: "exclusion",
@@ -178,13 +133,12 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
     }
     setState(() {
       cardNow++;
-      //randomTranslate = Random().nextInt(sideContent("front").length);
       sideNow = true;
     });
   }
 
-  void whenUserDontKnow(FlashcardElement card) {
-    cardDoesntKnown.add(card);
+  void whenUserDoNotKnow(FlashcardElement card) {
+    cardDoesNotKnown.add(card);
     if (cardNow == widget.cards.length - 1) {
       Navigator.of(context)
         ..pop()
@@ -193,7 +147,7 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
             builder: (context) => FlashcardSummary(
               folderName: widget.folderName,
               knownFlashcards: cardKnown,
-              dontKnownFlashcards: cardDoesntKnown,
+              doNotKnownFlashcards: cardDoesNotKnown,
               flashcardData: widget.flashcardData,
               firstSide: widget.firstSide,
               mode: "exclusion",

@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
+import 'package:la_fiszki/widgets/condition_display.dart';
+import 'package:la_fiszki/widgets/flashcard_panel.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
+import 'package:la_fiszki/widgets/prevent_from_losing_progress_dialog.dart';
+import 'package:la_fiszki/widgets/summary_extra_button.dart';
+import 'package:la_fiszki/widgets/summary_main_button.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
 
+
 class FlashcardSummary extends StatelessWidget {
   final List<FlashcardElement> knownFlashcards;
-  final List<FlashcardElement> dontKnownFlashcards;
+  final List<FlashcardElement> doNotKnownFlashcards;
   final String folderName;
   final Flashcard flashcardData;
   final String mode;
@@ -19,7 +25,7 @@ class FlashcardSummary extends StatelessWidget {
   const FlashcardSummary({
     super.key,
     required this.knownFlashcards,
-    required this.dontKnownFlashcards,
+    required this.doNotKnownFlashcards,
     required this.folderName,
     required this.flashcardData,
     required this.mode,
@@ -45,137 +51,63 @@ class FlashcardSummary extends StatelessWidget {
               return Center(
                 child: Column(
                   children: [
-                    SizedBox(
-                      width: constraints.maxWidth,
+                    FlashcardPanel(
                       height: constraints.maxHeight / 2,
-                      child: Card(
-                        color: Theme.of(context).colorScheme.primary,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                        child: Center(
-                          child: SummaryDifference(
-                            requirement: dontKnownFlashcards.isEmpty,
-                            whenFlashcardFinished: Text(
-                              "Umiesz już wszystko!\nCzy chcesz rozwiązać te fiszki jeszcze raz?",
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                    color: Theme.of(context).colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                            whenFlashcardNotComplete: Text(
-                              "Umiesz ${knownFlashcards.length} fiszek!\nPozostało ${dontKnownFlashcards.length} do nauki\nCzy kontynuować naukę?",
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                    color: Theme.of(context).colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ),
+                      centerChild: ConditionDisplay(
+                        condition: () => doNotKnownFlashcards.isEmpty,
+                        ifTrue: Text(
+                          "Umiesz już wszystko!\nCzy chcesz rozwiązać te fiszki jeszcze raz?",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        ifFalse: Text(
+                          "Umiesz ${knownFlashcards.length} fiszek!\nPozostało ${doNotKnownFlashcards.length} do nauki\nCzy kontynuować naukę?",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                       ),
                     ),
-                    SummaryDifference(
-                        requirement: dontKnownFlashcards.isEmpty,
-                        whenFlashcardFinished: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: SizedBox(
-                            height: constraints.maxHeight / 7,
-                            width: constraints.maxWidth - 25,
-                            child: FilledButton(
-                              style: ButtonStyle(
-                                shape: MaterialStatePropertyAll(
-                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                ),
-                              ),
-                              onPressed: () => openFlashcardFromStart(context),
-                              child: Text(
-                                "Rozpocznij naukę od początku",
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                      color: Theme.of(context).colorScheme.onPrimary,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        whenFlashcardNotComplete: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: SizedBox(
-                            height: constraints.maxHeight / 7,
-                            width: constraints.maxWidth - 25,
-                            child: FilledButton(
-                              style: ButtonStyle(
-                                shape: MaterialStatePropertyAll(
-                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                ),
-                              ),
-                              onPressed: () => openFlashcardAgain(context),
-                              child: Text(
-                                "Kontynuuj naukę",
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                      color: Theme.of(context).colorScheme.onPrimary,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        )),
-                    SummaryDifference(
-                      requirement: dontKnownFlashcards.isEmpty,
-                      whenFlashcardFinished: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          height: constraints.maxHeight / 9,
-                          width: constraints.maxWidth - 75,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              "Wróć do menu głównego",
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
-                            ),
-                          ),
-                        ),
+                    ConditionDisplay(
+                      condition: () => doNotKnownFlashcards.isEmpty,
+                      ifTrue: SummaryMainButton(
+                        width: constraints.maxWidth - 25,
+                        height: constraints.maxHeight / 7,
+                        onPressed: () => openFlashcardFromStart(context)
                       ),
-                      whenFlashcardNotComplete: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          height: constraints.maxHeight / 9,
-                          width: constraints.maxWidth - 75,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              shape: MaterialStatePropertyAll(
-                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                              ),
-                            ),
-                            onPressed: () {
-                              preventFromLosingProgress(context).then(
-                                (value) {
-                                  if (value == true) {
-                                    Navigator.pop(context);
-                                  }
-                                },
-                              );
-                            },
-                            child: Text(
-                              "Wróć do menu głównego",
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    color: Theme.of(context).colorScheme.primary,
-                                  ),
-                            ),
-                          ),
-                        ),
+                      ifFalse: SummaryMainButton(
+                        width: constraints.maxWidth - 25, 
+                        height: constraints.maxHeight / 7,
+                        onPressed: () => openFlashcardAgain(context),
+                      )
+                    ),
+                    ConditionDisplay(
+                      condition: () => doNotKnownFlashcards.isEmpty,
+                      ifTrue: SummaryExtraButton(
+                        height: constraints.maxHeight / 9,
+                        width: constraints.maxWidth - 75,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }
                       ),
+                      ifFalse: SummaryExtraButton(
+                        height: constraints.maxHeight / 9,
+                        width: constraints.maxWidth - 75,
+                        onPressed: () {
+                          preventFromLosingProgress(context).then(
+                            (value) {
+                              if (value == true && context.mounted) {
+                                Navigator.pop(context);
+                              }
+                            },
+                          );
+                        }
+                      )
                     ),
                   ],
                 ),
@@ -189,7 +121,7 @@ class FlashcardSummary extends StatelessWidget {
 
   void openFlashcardAgain(BuildContext context) {
     Random random = Random();
-    var shuffleCards = List<FlashcardElement>.from(dontKnownFlashcards);
+    var shuffleCards = List<FlashcardElement>.from(doNotKnownFlashcards);
     shuffleCards.shuffle(random);
     Navigator.of(context)
       ..pop()
@@ -256,49 +188,9 @@ class FlashcardSummary extends StatelessWidget {
     final shouldPop = await showDialog<bool>(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-          title: Text('Wyjście'),
-          content: Text('Twoje postępy w tej sesji fiszek nie zostaną zapisane. Czy na pewno chcesz wyjść?'),
-          actions: [
-            TextButton(
-              child: Text('Anuluj'),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            TextButton(
-              child: Text('Potwierdź'),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-          ],
-        );
+        return PreventFromLosingProgressDialog();
       },
     );
     return shouldPop ?? false;
-  }
-}
-
-class SummaryDifference extends StatelessWidget {
-  final bool requirement;
-
-  final Widget whenFlashcardFinished;
-  final Widget whenFlashcardNotComplete;
-  const SummaryDifference({
-    super.key,
-    required this.requirement,
-    required this.whenFlashcardFinished,
-    required this.whenFlashcardNotComplete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        if (requirement) {
-          return whenFlashcardFinished;
-        } else {
-          return whenFlashcardNotComplete;
-        }
-      },
-    );
   }
 }
