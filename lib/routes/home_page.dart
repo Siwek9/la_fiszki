@@ -97,9 +97,9 @@ class HomeBody extends StatelessWidget {
                         }
                       },
                       style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.secondary),
-                          foregroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.onSecondary),
-                          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.zero))),
+                          backgroundColor: WidgetStateProperty.all(Theme.of(context).colorScheme.secondary),
+                          foregroundColor: WidgetStateProperty.all(Theme.of(context).colorScheme.onSecondary),
+                          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.zero))),
                       child: Text("Stwórz fiszkę (Strona Internetowa)"),
                     )),
                 // Text("Stwórz fiszke"),
@@ -110,9 +110,9 @@ class HomeBody extends StatelessWidget {
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
-                    fixedSize: MaterialStateProperty.all(Size(constraints.maxWidth, constraints.maxHeight / 6)),
+                    fixedSize: WidgetStateProperty.all(Size(constraints.maxWidth, constraints.maxHeight / 6)),
                   ),
                   onPressed: importButtonPressed,
                   child: Text("Importuj fiszke", style: TextStyle(fontSize: constraints.maxWidth / 13)),
