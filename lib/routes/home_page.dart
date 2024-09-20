@@ -91,7 +91,7 @@ class HomeBody extends StatelessWidget {
                     width: constraints.maxWidth,
                     child: FilledButton(
                       onPressed: () async {
-                        final url = Uri.parse('https:siwek9.github.io/la-fiszki-website');
+                        final url = Uri.parse('http://la-fiszki.com');
                         if (await canLaunchUrl(url)) {
                           launchUrl(url, mode: LaunchMode.externalApplication);
                         }
