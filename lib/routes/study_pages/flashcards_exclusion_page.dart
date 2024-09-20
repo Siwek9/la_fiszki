@@ -1,66 +1,42 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:la_fiszki/flashcard.dart';
-import 'package:la_fiszki/routes/study_pages/flashcard_summary.dart';
+import 'package:la_fiszki/routes/flashcard_study_page.dart';
 import 'package:la_fiszki/widgets/choose_button.dart';
+import 'package:la_fiszki/widgets/flashcard_panel.dart';
+import 'package:la_fiszki/widgets/flashcard_side_text.dart';
+import 'package:la_fiszki/widgets/flashcard_text_content.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
 
-import 'package:la_fiszki/widgets/flashcard_panel.dart';
-import 'package:la_fiszki/widgets/flashcard_side_text.dart';
-import 'package:la_fiszki/widgets/flashcard_text_content.dart';
-import 'package:la_fiszki/widgets/prevent_from_losing_progress_dialog.dart';
-
-class FlashcardsExclusionPage extends StatefulWidget {
-  final int firstSide;
-  final List<FlashcardElement> cards;
-  final String folderName;
-  final Flashcard flashcardData;
-
+class FlashcardsExclusionPage extends FlashcardStudyPage {
   const FlashcardsExclusionPage(
-      {super.key, required this.cards, required this.folderName, required this.flashcardData, required this.firstSide});
+      {super.key,
+      required super.cards,
+      required super.folderName,
+      required super.flashcardData,
+      required super.firstSide});
 
   @override
-  State<FlashcardsExclusionPage> createState() => _FlashcardsExclusionPageState();
+  State createState() => _FlashcardsExclusionPageState();
 }
 
-class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
+class _FlashcardsExclusionPageState extends FlashcardStudyPageState<FlashcardsExclusionPage> {
   _FlashcardsExclusionPageState();
-  int cardNow = 0;
-  bool sideNow = true;
-  // int? randomTranslate;
-  List<FlashcardElement> cardKnown = List<FlashcardElement>.empty(growable: true);
-  List<FlashcardElement> cardDoesNotKnown = List<FlashcardElement>.empty(growable: true);
 
-  List<String> sideContent(String side) {
-    if (side == "front") {
-      if (widget.firstSide == 0) {
-        return widget.cards[cardNow].frontSide;
-      } else {
-        return widget.cards[cardNow].backSide;
-      }
-    } else {
-      if (widget.firstSide == 0) {
-        return widget.cards[cardNow].backSide;
-      } else {
-        return widget.cards[cardNow].frontSide;
-      }
-    }
+  @override
+  String get mode {
+    return "exclusion";
   }
 
   @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => preventFromLosingProgress(context),
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text("${cardNow + 1}/${widget.cards.length}"),
-        ),
-        body: LayoutBuilder(builder: (context, BoxConstraints constraints) {
-          return Column(children: [
+  Widget build(BuildContext context, {Widget? child}) {
+    return super.build(
+      context,
+      child: LayoutBuilder(builder: (context, BoxConstraints constraints) {
+        return Column(
+          children: [
             GestureDetector(
                 onTap: () {
                   setState(() {
@@ -96,69 +72,9 @@ class _FlashcardsExclusionPageState extends State<FlashcardsExclusionPage> {
                 ),
               ],
             )
-          ]);
-        }),
-      ),
-    );
-  }
-
-  Future<bool> preventFromLosingProgress(BuildContext context) async {
-    final shouldPop = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return PreventFromLosingProgressDialog();
-      },
-    );
-    return shouldPop ?? false;
-  }
-
-  void whenUserKnow(FlashcardElement card) {
-    cardKnown.add(card);
-    if (cardNow == widget.cards.length - 1) {
-      Navigator.of(context)
-        ..pop()
-        ..push(
-          MaterialPageRoute(
-            builder: (context) => FlashcardSummary(
-              folderName: widget.folderName,
-              knownFlashcards: cardKnown,
-              doNotKnownFlashcards: cardDoesNotKnown,
-              flashcardData: widget.flashcardData,
-              firstSide: widget.firstSide,
-              mode: "exclusion",
-            ),
-          ),
+          ],
         );
-      return;
-    }
-    setState(() {
-      cardNow++;
-      sideNow = true;
-    });
-  }
-
-  void whenUserDoNotKnow(FlashcardElement card) {
-    cardDoesNotKnown.add(card);
-    if (cardNow == widget.cards.length - 1) {
-      Navigator.of(context)
-        ..pop()
-        ..push(
-          MaterialPageRoute(
-            builder: (context) => FlashcardSummary(
-              folderName: widget.folderName,
-              knownFlashcards: cardKnown,
-              doNotKnownFlashcards: cardDoesNotKnown,
-              flashcardData: widget.flashcardData,
-              firstSide: widget.firstSide,
-              mode: "exclusion",
-            ),
-          ),
-        );
-      return;
-    }
-    setState(() {
-      cardNow++;
-      sideNow = true;
-    });
+      }),
+    );
   }
 }
