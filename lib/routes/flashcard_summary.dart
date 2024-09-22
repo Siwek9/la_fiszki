@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
+import 'package:la_fiszki/flashcard_element.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
 import 'package:la_fiszki/widgets/condition_display.dart';
@@ -12,7 +13,6 @@ import 'package:la_fiszki/widgets/summary_main_button.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
-
 
 class FlashcardSummary extends StatelessWidget {
   final List<FlashcardElement> knownFlashcards;
@@ -74,41 +74,36 @@ class FlashcardSummary extends StatelessWidget {
                       ),
                     ),
                     ConditionDisplay(
-                      condition: () => doNotKnownFlashcards.isEmpty,
-                      ifTrue: SummaryMainButton(
-                        width: constraints.maxWidth - 25,
-                        height: constraints.maxHeight / 7,
-                        onPressed: () => openFlashcardFromStart(context)
-                      ),
-                      ifFalse: SummaryMainButton(
-                        width: constraints.maxWidth - 25, 
-                        height: constraints.maxHeight / 7,
-                        onPressed: () => openFlashcardAgain(context),
-                      )
-                    ),
+                        condition: () => doNotKnownFlashcards.isEmpty,
+                        ifTrue: SummaryMainButton(
+                            width: constraints.maxWidth - 25,
+                            height: constraints.maxHeight / 7,
+                            onPressed: () => openFlashcardFromStart(context)),
+                        ifFalse: SummaryMainButton(
+                          width: constraints.maxWidth - 25,
+                          height: constraints.maxHeight / 7,
+                          onPressed: () => openFlashcardAgain(context),
+                        )),
                     ConditionDisplay(
-                      condition: () => doNotKnownFlashcards.isEmpty,
-                      ifTrue: SummaryExtraButton(
-                        height: constraints.maxHeight / 9,
-                        width: constraints.maxWidth - 75,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        }
-                      ),
-                      ifFalse: SummaryExtraButton(
-                        height: constraints.maxHeight / 9,
-                        width: constraints.maxWidth - 75,
-                        onPressed: () {
-                          preventFromLosingProgress(context).then(
-                            (value) {
-                              if (value == true && context.mounted) {
-                                Navigator.pop(context);
-                              }
-                            },
-                          );
-                        }
-                      )
-                    ),
+                        condition: () => doNotKnownFlashcards.isEmpty,
+                        ifTrue: SummaryExtraButton(
+                            height: constraints.maxHeight / 9,
+                            width: constraints.maxWidth - 75,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            }),
+                        ifFalse: SummaryExtraButton(
+                            height: constraints.maxHeight / 9,
+                            width: constraints.maxWidth - 75,
+                            onPressed: () {
+                              preventFromLosingProgress(context).then(
+                                (value) {
+                                  if (value == true && context.mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                              );
+                            })),
                   ],
                 ),
               );
