@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
+import 'package:la_fiszki/flashcard_element.dart';
 import 'package:la_fiszki/flashcards_storage.dart';
 
 import 'dart:developer' as dev;
@@ -81,16 +82,5 @@ List<String> stringToList(dynamic element) {
   } else {
     List<String> toReturn = (element as List<dynamic>).map((e) => e as String).toList();
     return toReturn;
-  }
-}
-
-class FlashcardElement {
-  List<String> frontSide;
-  List<String> backSide;
-
-  FlashcardElement({required this.frontSide, required this.backSide});
-
-  static bool isFlashcardElement(dynamic element) {
-    return element?['front'] != null && element?['back'] != null;
   }
 }

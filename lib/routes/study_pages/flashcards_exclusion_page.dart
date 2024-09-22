@@ -34,47 +34,55 @@ class _FlashcardsExclusionPageState extends FlashcardStudyPageState<FlashcardsEx
   Widget build(BuildContext context, {Widget? child}) {
     return super.build(
       context,
-      child: LayoutBuilder(builder: (context, BoxConstraints constraints) {
-        return Column(
-          children: [
-            GestureDetector(
+      child: LayoutBuilder(
+        builder: (context, BoxConstraints constraints) {
+          return Column(
+            children: [
+              GestureDetector(
                 onTap: () {
                   setState(() {
                     sideNow = !sideNow;
                   });
                 },
                 child: FlashcardPanel(
-                    height: constraints.maxHeight / 2,
-                    topChild: FlashcardSideText((sideNow ^ (widget.firstSide == 1))
-                        ? widget.flashcardData.frontSideName
-                        : widget.flashcardData.backSideName),
-                    centerChild: FlashcardTextContent(sideNow
+                  height: constraints.maxHeight / 2,
+                  topChild: FlashcardSideText((sideNow ^ (widget.firstSide == 1))
+                      ? widget.flashcardData.frontSideName
+                      : widget.flashcardData.backSideName),
+                  centerChild: FlashcardTextContent(
+                    sideNow
                         ? sideContent("front")[Random().nextInt(sideContent("front").length)]
-                        : sideContent("back").join('/\n')))),
-            Flex(
-              direction: Axis.horizontal,
-              children: [
-                ChooseAnswerButton(
-                  text: "Wiem",
-                  color: WidgetStatePropertyAll(Colors.green),
-                  constraints: constraints,
-                  onPressed: () {
-                    whenUserKnow(widget.cards[cardNow]);
-                  },
+                        : sideContent("back").join('/\n'),
+                  ),
                 ),
-                ChooseAnswerButton(
-                  text: "Nie wiem",
-                  color: WidgetStatePropertyAll(Colors.red),
-                  constraints: constraints,
-                  onPressed: () {
-                    whenUserDoNotKnow(widget.cards[cardNow]);
-                  },
-                ),
-              ],
-            )
-          ],
-        );
-      }),
+              ),
+              Flex(
+                direction: Axis.horizontal,
+                children: [
+                  ChooseAnswerButton(
+                    text: "Wiem",
+                    color: WidgetStatePropertyAll(Colors.green),
+                    topText: cardKnown.length.toString(),
+                    constraints: constraints,
+                    onPressed: () {
+                      whenUserKnow(widget.cards[cardNow]);
+                    },
+                  ),
+                  ChooseAnswerButton(
+                    text: "Nie wiem",
+                    color: WidgetStatePropertyAll(Colors.red),
+                    topText: cardDoesNotKnown.length.toString(),
+                    constraints: constraints,
+                    onPressed: () {
+                      whenUserDoNotKnow(widget.cards[cardNow]);
+                    },
+                  ),
+                ],
+              )
+            ],
+          );
+        },
+      ),
     );
   }
 }

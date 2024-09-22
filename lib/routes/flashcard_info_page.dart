@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
+import 'package:la_fiszki/flashcard_element.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
 import 'package:la_fiszki/widgets/labeled_checkbox.dart';

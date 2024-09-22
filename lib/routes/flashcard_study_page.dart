@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
+import 'package:la_fiszki/flashcard_element.dart';
 import 'package:la_fiszki/routes/flashcard_summary.dart';
 import 'package:la_fiszki/widgets/prevent_from_losing_progress_dialog.dart';
 
