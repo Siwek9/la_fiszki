@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/routes/flashcard_study_page.dart';
-import 'package:la_fiszki/widgets/choose_button.dart';
+import 'package:la_fiszki/widgets/choose_answer_button.dart';
 import 'package:la_fiszki/widgets/flashcard_panel.dart';
 import 'package:la_fiszki/widgets/flashcard_side_text.dart';
 import 'package:la_fiszki/widgets/flashcard_text_content.dart';
@@ -54,7 +54,7 @@ class _FlashcardsExclusionPageState extends FlashcardStudyPageState<FlashcardsEx
             Flex(
               direction: Axis.horizontal,
               children: [
-                ChooseButton(
+                ChooseAnswerButton(
                   text: "Wiem",
                   color: WidgetStatePropertyAll(Colors.green),
                   constraints: constraints,
@@ -62,7 +62,7 @@ class _FlashcardsExclusionPageState extends FlashcardStudyPageState<FlashcardsEx
                     whenUserKnow(widget.cards[cardNow]);
                   },
                 ),
-                ChooseButton(
+                ChooseAnswerButton(
                   text: "Nie wiem",
                   color: WidgetStatePropertyAll(Colors.red),
                   constraints: constraints,

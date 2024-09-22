@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ChooseButton extends StatelessWidget {
-  const ChooseButton(
+class ChooseAnswerButton extends StatelessWidget {
+  const ChooseAnswerButton(
       {super.key, required this.text, required this.color, required this.constraints, required this.onPressed});
   final String text;
   final WidgetStateProperty<Color> color;

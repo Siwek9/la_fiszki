@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
+import 'package:la_fiszki/widgets/labeled_checkbox.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
+
+import 'package:la_fiszki/widgets/switch_button.dart';
 
 class FlashcardsInfoPage extends StatelessWidget {
   final Future<Flashcard> futureFlashcard;
@@ -73,16 +76,12 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
                 randomOrder = value;
               }),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 12.0, bottom: 4.0),
-              child: Text(
-                "Wyświetl jako pierwsze:",
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-            ChooseSide(
-              frontSide: widget.content.frontSideName,
-              backSide: widget.content.backSideName,
+            SwitchButton(
+              title: "Wyświetl jako pierwsze:",
+              buttons: [
+                widget.content.frontSideName,
+                widget.content.backSideName,
+              ],
               onSelected: (sideIndex) {
                 side = sideIndex;
               },
@@ -167,144 +166,6 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
           firstSide: side,
         ),
       ),
-    );
-  }
-}
-
-class LabeledCheckbox extends StatelessWidget {
-  final String label;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  const LabeledCheckbox({
-    super.key,
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        onChanged(!value);
-      },
-      child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-            Checkbox(
-              value: value,
-              onChanged: (bool? newValue) {
-                onChanged(newValue!);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ChooseSide extends StatefulWidget {
-  final void Function(int sideIndex) onSelected;
-  final String frontSide;
-  final String backSide;
-
-  const ChooseSide({
-    super.key,
-    required this.onSelected,
-    required this.frontSide,
-    required this.backSide,
-  });
-
-  @override
-  State<ChooseSide> createState() => _ChooseSideState();
-}
-
-class _ChooseSideState extends State<ChooseSide> {
-  var selectedSide = [true, false];
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: LayoutBuilder(builder: (context, constraints) {
-        return ToggleButtons(
-          // selectedColor: Colors.red,
-          renderBorder: false,
-          isSelected: selectedSide,
-          onPressed: (index) {
-            widget.onSelected(index);
-            setState(() {
-              if (index == 0) {
-                selectedSide = [true, false];
-              } else {
-                selectedSide = [false, true];
-              }
-            });
-          },
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color:
-                    selectedSide[0] ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.onTertiary,
-                border: !selectedSide[0]
-                    ? Border.all(
-                        width: 3.0,
-                        color: Theme.of(context).colorScheme.tertiary,
-                      )
-                    : null,
-              ),
-              height: constraints.maxHeight,
-              width: (constraints.maxWidth / 2),
-              child: Center(
-                child: Text(
-                  widget.frontSide,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: selectedSide[0]
-                        ? Theme.of(context).colorScheme.onTertiary
-                        : Theme.of(context).colorScheme.tertiary,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color:
-                    selectedSide[1] ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.onTertiary,
-                border: !selectedSide[1]
-                    ? Border.all(
-                        width: 3.0,
-                        color: Theme.of(context).colorScheme.tertiary,
-                      )
-                    : null,
-              ),
-              height: constraints.maxHeight,
-              width: (constraints.maxWidth / 2),
-              child: Center(
-                child: Text(
-                  widget.backSide,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: selectedSide[1]
-                        ? Theme.of(context).colorScheme.onTertiary
-                        : Theme.of(context).colorScheme.tertiary,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      }),
     );
   }
 }
