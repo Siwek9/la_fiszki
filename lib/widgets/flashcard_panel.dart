@@ -12,11 +12,14 @@ class FlashcardPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      child: Card(
-        color: Theme.of(context).colorScheme.primary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Stack(
-          children: _getAllElementInsidePanel(),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Card(
+          color: Theme.of(context).colorScheme.primary,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Stack(
+            children: _getAllElementInsidePanel(),
+          ),
         ),
       ),
     );
@@ -26,32 +29,30 @@ class FlashcardPanel extends StatelessWidget {
     List<Widget> elements = List.empty(growable: true);
 
     if (topChild != null) {
-      elements.add(Positioned.fill(
-        top: 20,
-        child: topChild!
-      ));
+      elements.add(Positioned.fill(top: 20, child: topChild!));
     }
     if (centerChild != null) {
       elements.add(Center(
-              child: Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Center(
-                    child: centerChild
-                  ),
-                ),
-              ),
-            ));
+        child: Align(
+          alignment: Alignment.center,
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Center(child: centerChild),
+          ),
+        ),
+      ));
     }
     if (bottomChild != null) {
-      elements.add(Positioned.fill(
-        bottom: 20,
-        child: Align( alignment: Alignment.bottomCenter,
-          child: bottomChild!)
-      ));
+      elements.add(
+        Positioned.fill(
+          bottom: 20,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: bottomChild!,
+          ),
+        ),
+      );
     }
     return elements;
   }
-
 }

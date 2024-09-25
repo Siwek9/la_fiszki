@@ -34,7 +34,7 @@ class Flashcard {
         content?['author'] == null ||
         content?['sideName']['front'] == null ||
         content?['sideName']['back'] == null ||
-        content?['cardboards'] == null) return false;
+        (content?['cardboards'] == null) && content?['flashcards'] == null) return false;
 
     if (content['cardboards'] is! List) return false;
 
@@ -58,7 +58,7 @@ class Flashcard {
     directory = Directory("${directory.path}$folderName");
 
     File rawFile = File("${directory.path}/raw.json");
-    if (!await rawFile.exists()) return Future.error("File not exists");
+    if (!await rawFile.exists()) return Future.error("File do not exists");
 
     String fileContent = await rawFile.readAsString();
     if (!Flashcard.isFlashcard(fileContent)) {

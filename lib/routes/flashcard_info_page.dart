@@ -2,10 +2,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:la_fiszki/flashcard.dart';
 import 'package:la_fiszki/flashcard_element.dart';
+import 'package:la_fiszki/routes/flashcard_main_data.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_writing_page.dart';
 import 'package:la_fiszki/routes/study_pages/flashcards_exclusion_page.dart';
+import 'package:la_fiszki/widgets/floating_action_button_info_page.dart';
 import 'package:la_fiszki/widgets/labeled_checkbox.dart';
 import 'package:la_fiszki/widgets/loading_screen.dart';
+import 'package:la_fiszki/widgets/start_studying_button.dart';
 
 // ignore: unused_import
 import 'dart:developer' as dev;
@@ -46,11 +49,41 @@ class FlashcardInfoContent extends StatefulWidget {
 
 class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
   int side = 0;
+  FlashcardMode mode = FlashcardMode.choosing;
   bool randomOrder = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButtonInfoPage(
+        distance: 90,
+        children: [
+          StartStudyingButton(
+            label: Text("Rozpocznij nową lekcje"),
+            icon: Icon(
+              Icons.add_circle_outline,
+            ),
+            onPressed: () {
+              switch (mode) {
+                case FlashcardMode.choosing:
+                  openExclusionPage(context);
+                  break;
+                case FlashcardMode.writing:
+                  openWritingPage(context);
+                  break;
+              }
+            },
+          ),
+          StartStudyingButton(
+            label: Text("Kontynuuj naukę"),
+            icon: Icon(
+              Icons.add_circle_outline,
+            ),
+            onPressed: () {},
+          ),
+        ],
+      ),
       appBar: AppBar(
         title: Text(widget.content.name),
         centerTitle: true,
@@ -87,13 +120,22 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
                 side = sideIndex;
               },
             ),
-            StartStudyingButton(
-              onPressed: () => openExclusionPage(context),
-              modeName: "Wykluczanie",
-            ),
-            StartStudyingButton(
-              onPressed: () => openWritingPage(context),
-              modeName: "Pisanie",
+            SwitchButton(
+              title: "Wybierz rodzaj nauki:",
+              buttons: [
+                "Wybieranie",
+                "Pisanie",
+              ],
+              onSelected: (sideIndex) {
+                switch (sideIndex) {
+                  case 0:
+                    mode = FlashcardMode.choosing;
+                    break;
+                  case 1:
+                    mode = FlashcardMode.writing;
+                    break;
+                }
+              },
             ),
             Padding(
               padding: const EdgeInsets.only(top: 15.0, bottom: 5.0),
@@ -171,153 +213,7 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
   }
 }
 
-class StartStudyingButton extends StatelessWidget {
-  final String modeName;
-
-  const StartStudyingButton({super.key, required this.onPressed, required this.modeName});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 5.0),
-      child: ElevatedButton.icon(
-        icon: Icon(
-          Icons.play_circle,
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-        onPressed: onPressed,
-        style: ButtonStyle(
-          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.zero))),
-          backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.secondary),
-          foregroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onSurface),
-          iconSize: WidgetStatePropertyAll(50),
-          padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
-        ),
-        label: Text(
-          "Rozpocznij naukę ($modeName)",
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-        ),
-      ),
-    );
-  }
-}
-
-class FlashcardMainData extends StatelessWidget {
-  const FlashcardMainData({
-    super.key,
-    required this.content,
-  });
-
-  final Flashcard content;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      margin: EdgeInsets.symmetric(vertical: 5.0),
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TitleAndContent(
-              title: "Nazwa Fiszek",
-              content: content.name,
-            ),
-            TitleAndContent(
-              title: "Autor",
-              content: content.author,
-            ),
-            TitleAndContent(
-              title: "Ilość Fiszek",
-              content: content.cards.length.toString(),
-            ),
-            TitleAndContent(
-              title: "Pierwsza Strona",
-              content: content.frontSideName,
-            ),
-            TitleAndContent(
-              title: "Druga Strona",
-              content: content.backSideName,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class TitleAndContent extends StatelessWidget {
-  const TitleAndContent({super.key, required this.title, required this.content});
-
-  final String title;
-  final String content;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            textAlign: TextAlign.left,
-            style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          Text(
-            content,
-            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CompareElements extends StatelessWidget {
-  const CompareElements(
-      {super.key, required this.left, required this.right, this.compare = const Icon(Icons.compare_arrows)});
-
-  // final Flashcard content;
-
-  final Widget left;
-  final Widget right;
-  final Widget compare;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 5.0),
-      padding: EdgeInsets.all(20.0),
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
-      child: Flex(
-        direction: Axis.horizontal,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Expanded(
-            child: left,
-          ),
-          Expanded(
-            child: Align(alignment: Alignment.center, child: compare),
-          ),
-          Expanded(
-            child: Align(alignment: Alignment.centerRight, child: right),
-          )
-        ],
-      ),
-    );
-  }
+enum FlashcardMode {
+  choosing,
+  writing,
 }

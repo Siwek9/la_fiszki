@@ -13,7 +13,7 @@ class Catalogue {
     return File("${flashcardsPath}catalogue.json");
   }
 
-  static CatalogueElement createCatalogueElement({required String folderName, required var json}) {
+  static CatalogueElement createCatalogueElement({required String folderName, required dynamic json}) {
     return CatalogueElement(folderName: folderName, name: json['name'] ?? "");
   }
 
