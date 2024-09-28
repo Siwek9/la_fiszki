@@ -3,7 +3,7 @@
 - add new options for learning "5 at one time" as an alternative for "all at once" witch was only option, (x)
 - add button for choosing option described above, (✓)
 - number of answers on button in "choosing" mode, (✓)
-- adjust font size in main menu, (x)
+- adjust font size in main menu, (✓)
 - add option that allow to flip flashcards after wrong answer in "writing" mode, (x)
 - ignore white spaces at start and at the end of an answer in "writing" mode, (x)
 

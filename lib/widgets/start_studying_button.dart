@@ -15,15 +15,10 @@ class StartStudyingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width - 50,
+      width: MediaQuery.of(context).size.width - 10,
       decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.6),
-            blurRadius: 10,
+          // border: ,
           ),
-        ],
-      ),
       child: ElevatedButton.icon(
         label: label,
         icon: icon,

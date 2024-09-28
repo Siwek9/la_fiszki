@@ -57,7 +57,7 @@ class _FlashcardInfoContentState extends State<FlashcardInfoContent> {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButtonInfoPage(
-        distance: 90,
+        distance: 84,
         children: [
           StartStudyingButton(
             label: Text("Rozpocznij nową lekcje"),
